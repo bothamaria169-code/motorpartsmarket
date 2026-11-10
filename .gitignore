@@ -16,3 +16,6 @@ uploads/products/*
 error_log
 .DS_Store
 Thumbs.db
+
+# Live secrets.php prepared for upload — never in GitHub
+/server-upload/
