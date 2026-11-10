@@ -9,7 +9,7 @@ Follow the sections in order. Each one ends with a test.
 | Where | Field | Paste exactly |
 |---|---|---|
 | cPanel → Git™ Version Control | Clone URL | `https://github.com/bothamaria169-code/motorpartsmarket.git` |
-| cPanel → Git™ Version Control | Repository Path | `repositories/motorpartsmarket` |
+| cPanel → Git™ Version Control | Repository Path | `repositories/mpm` |
 | cPanel → Git™ Version Control | Repository Name | `motorpartsmarket` |
 | Meta → WhatsApp → Configuration | Callback URL | `https://motorpartsmarket.co.za/webhook.php` |
 | Google Search Console | Sitemap | `sitemap.xml` |
@@ -105,8 +105,8 @@ The chat works without AI. With it, the chat also understands messy messages.
 ## 8. Daily clean-up job (3 min) 🟧 CPANEL
 
 1. cPanel → **Cron Jobs** → **Common Settings**: **Once Per Day**.
-2. **Command** (replace `CPANELUSER` with your cPanel username):
-   `/usr/local/bin/php /home/CPANELUSER/public_html/cron.php >/dev/null 2>&1`
+2. **Command** :
+   `/usr/local/bin/php /home/motorpartsmarket/public_html/cron.php >/dev/null 2>&1`
 3. **Add New Cron Job**.
 
 **Test:** open `https://motorpartsmarket.co.za/cron.php?key=YOUR_CRON_KEY`. It prints "Done" and the date.
