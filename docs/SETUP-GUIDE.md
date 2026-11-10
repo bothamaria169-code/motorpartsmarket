@@ -53,6 +53,8 @@ Follow the sections in order. Each one ends with a test.
 
 ![cPanel → Create Repository](screenshots/cpanel-create-repository.png)
 
+> **Error `"" is not a valid "branch"` and Deploy greyed out?** cPanel cloned the repository while it was still empty. Fix: cPanel → **Terminal** → run `cd ~/repositories/motorpartsmarket && git fetch origin && git checkout -B main origin/main` → refresh **Pull or Deploy**. No Terminal? **Remove** the repository, delete the `repositories/motorpartsmarket` folder in **File Manager**, and **Create** it again.
+
 > If the GitHub repository is private, cPanel cannot clone it with this address. Make it public, or use a GitHub token in the Clone URL.
 
 > The old website's files stay in `public_html` next to the new ones. The new `index.php` replaces the old home page. Download a backup of `public_html` first if you want to keep the old site.
