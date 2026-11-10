@@ -1,0 +1,18 @@
+# ── Never in GitHub ──────────────────────────────────────────────
+config/secrets.php
+*.env
+.env*
+
+# Photos and videos uploaded in Admin live on the server only
+uploads/products/*
+
+# Raw phone photos/videos (already converted into assets/media/)
+/motorpartsmarket/
+
+# Tooling and junk
+.claude/
+*.zip
+*.log
+error_log
+.DS_Store
+Thumbs.db

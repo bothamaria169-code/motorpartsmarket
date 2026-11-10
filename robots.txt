@@ -1,0 +1,6 @@
+User-agent: *
+Disallow: /admin/
+Disallow: /ajax/
+Disallow: /login.php
+
+Sitemap: https://motorpartsmarket.co.za/sitemap.xml

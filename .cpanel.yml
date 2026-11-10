@@ -1,0 +1,16 @@
+# cPanel → Git™ Version Control → Manage → "Deploy HEAD Commit" runs these steps.
+# The repository is cloned to /home/<cpanel user>/repositories/motorpartsmarket and the
+# site is copied into public_html (motorpartsmarket.co.za is the account's own domain,
+# same set-up as bidcoauctions.co.za and easyauctions.co.za).
+# config/secrets.php and uploaded photos are never touched: they are not in the repository.
+# Upload config/secrets.php once with File Manager.
+#
+# $HOME is this cPanel account's own folder (/home/<cpanel user>), so no username to get wrong.
+deployment:
+  tasks:
+    - export DEPLOYPATH=$HOME/public_html/
+    - /bin/mkdir -p $DEPLOYPATH
+    - /bin/cp -R admin ajax assets config database includes $DEPLOYPATH
+    - /bin/cp *.php robots.txt .htaccess .user.ini $DEPLOYPATH
+    - /bin/mkdir -p ${DEPLOYPATH}uploads/products
+    - /bin/cp uploads/.htaccess ${DEPLOYPATH}uploads/.htaccess

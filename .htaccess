@@ -1,0 +1,52 @@
+Options -Indexes
+DirectoryIndex index.php
+
+# Product videos up to 40 MB (also set in .user.ini)
+<IfModule mod_php.c>
+  php_value upload_max_filesize 48M
+  php_value post_max_size 200M
+  php_value max_file_uploads 30
+</IfModule>
+
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+
+  # Live site: force https and drop "www." so Google sees one address
+  RewriteCond %{HTTP_HOST} ^www\.(motorpartsmarket\.co\.za)$ [NC]
+  RewriteRule ^ https://%1%{REQUEST_URI} [R=301,L]
+  RewriteCond %{HTTP_HOST} ^motorpartsmarket\.co\.za$ [NC]
+  RewriteCond %{HTTPS} !=on
+  RewriteCond %{HTTP:X-Forwarded-Proto} !=https
+  RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [R=301,L]
+
+  # Code, data, notes and the raw stock photos are never served directly
+  RewriteRule ^(config|includes|database|docs|motorpartsmarket|\.git|\.claude)(/|$) - [F,L]
+
+  RewriteRule ^sitemap\.xml$ sitemap.php [L]
+</IfModule>
+
+# Dumps, notes and anything that looks like a credential note
+<FilesMatch "(\.(sql|md|lock|log|bak|env|ini)|^\.cpanel\.yml|^\.gitignore)$">
+  Require all denied
+</FilesMatch>
+
+<IfModule mod_headers.c>
+  Header always set X-Content-Type-Options "nosniff"
+  Header always set X-Frame-Options "SAMEORIGIN"
+  Header always set Referrer-Policy "strict-origin-when-cross-origin"
+  Header always set Permissions-Policy "camera=(), microphone=(), geolocation=()"
+</IfModule>
+
+<IfModule mod_deflate.c>
+  AddOutputFilterByType DEFLATE text/html text/css application/javascript application/json image/svg+xml
+</IfModule>
+
+<IfModule mod_expires.c>
+  ExpiresActive On
+  ExpiresByType text/css "access plus 30 days"
+  ExpiresByType application/javascript "access plus 30 days"
+  ExpiresByType image/svg+xml "access plus 30 days"
+  ExpiresByType image/webp "access plus 60 days"
+  ExpiresByType image/png "access plus 60 days"
+  ExpiresByType video/mp4 "access plus 60 days"
+</IfModule>
