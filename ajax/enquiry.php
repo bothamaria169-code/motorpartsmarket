@@ -29,7 +29,7 @@ $lines = array_filter([
     "Name: {$name}", "Phone: {$phone}",
     $vehicle ? "Vehicle: {$vehicle}" : '', $area ? "Area: {$area}" : '', $message ? "Message: {$message}" : '',
 ]);
-sendMail(get_setting('contact_email', CONTACT_EMAIL), "New enquiry {$ref} — {$name}", implode("\n", $lines) . "\n\n" . APP_URL . '/admin/enquiries.php');
+sendMail(get_setting('contact_email', CONTACT_EMAIL), "New enquiry {$ref} — {$name}", implode("\n", $lines) . "\n\n" . APP_URL . '/admin/enquiries.php', $email ?: null);
 
 $waText = "Hi, I just sent enquiry {$ref}." . ($product ? " I'm interested in: {$product['title']}." : '') . ($vehicle ? " My vehicle: {$vehicle}." : '');
 jsonResponse(['ok' => true, 'ref' => $ref, 'whatsapp' => whatsappLink($waText)]);

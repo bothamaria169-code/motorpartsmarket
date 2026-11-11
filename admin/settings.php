@@ -4,8 +4,8 @@ declare(strict_types=1);
 require __DIR__ . '/_shell.php';
 require_once dirname(__DIR__) . '/includes/ai.php';
 
-const PLAIN = ['whatsapp_number', 'contact_email', 'groq_model', 'ai_monthly_limit', 'ga4_id', 'meta_pixel_id', 'google_site_verification', 'wa_phone_id', 'wa_verify_token'];
-const SECRET_KEYS = ['groq_api_key', 'wa_token'];
+const PLAIN = ['whatsapp_number', 'contact_email', 'smtp_host', 'smtp_port', 'smtp_user', 'groq_model', 'ai_monthly_limit', 'ga4_id', 'meta_pixel_id', 'google_site_verification', 'wa_phone_id', 'wa_verify_token'];
+const SECRET_KEYS = ['groq_api_key', 'wa_token', 'smtp_pass'];
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $action = (string) ($_POST['action'] ?? 'save');
@@ -24,8 +24,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     } elseif ($action === 'test_email') {
         $to = get_setting('contact_email', CONTACT_EMAIL);
-        $sent = sendMail($to, 'Test email from ' . APP_NAME, "This is a test.\nEnquiries from the website will arrive at this address.");
-        flash($sent ? 'ok' : 'err', $sent ? "Test email handed to the server for {$to}. Check the inbox (and spam) in a minute." : "The server refused to send email to {$to}. Enquiries are still saved under Enquiries.");
+        $err = sendMail($to, 'Test email from ' . APP_NAME, "This is a test.\nEnquiries from the website will arrive at this address.");
+        flash($err === '' ? 'ok' : 'err', $err === '' ? "Test email sent to {$to}. Check the inbox (and spam) in a minute." : "Email not sent: {$err} Enquiries are still saved under Enquiries.");
     } elseif ($action === 'password') {
         $pw = (string) ($_POST['new_password'] ?? '');
         if (strlen($pw) < 10) flash('err', 'Use at least 10 characters.');
@@ -49,6 +49,14 @@ adminHead('Settings', 'settings.php');
   <div class="fgrid">
     <div class="field"><label for="whatsapp_number">WhatsApp number</label><input id="whatsapp_number" name="whatsapp_number" inputmode="tel" value="<?= $g('whatsapp_number') ?>" placeholder="e.g. 082 123 4567"><small>Shows the green WhatsApp buttons. Leave blank to hide them.</small></div>
     <div class="field"><label for="contact_email">Enquiries go to this email</label><input id="contact_email" name="contact_email" type="email" value="<?= $g('contact_email', CONTACT_EMAIL) ?>"></div>
+  </div>
+
+  <h2 style="margin-top:28px">Email (the mailbox that sends enquiry emails)</h2>
+  <div class="fgrid">
+    <div class="field"><label for="smtp_host">Mail server</label><input id="smtp_host" name="smtp_host" value="<?= $g('smtp_host', SMTP_HOST ?: 'mail.motorpartsmarket.co.za') ?>"><small>cPanel → Email Accounts → Connect Devices → "Outgoing Server".</small></div>
+    <div class="field"><label for="smtp_port">Port</label><input id="smtp_port" name="smtp_port" type="number" value="<?= $g('smtp_port', (string) (SMTP_PORT ?: 465)) ?>"><small>465 (SSL) unless your host says 587.</small></div>
+    <div class="field"><label for="smtp_user">Mailbox</label><input id="smtp_user" name="smtp_user" type="email" autocomplete="off" value="<?= $g('smtp_user', SMTP_USER ?: 'info@motorpartsmarket.co.za') ?>"></div>
+    <div class="field"><label for="smtp_pass">Mailbox password</label><input id="smtp_pass" name="smtp_pass" type="password" autocomplete="new-password" placeholder="<?= get_setting('smtp_pass', SMTP_PASS) !== '' ? 'Saved — type to change' : 'Password of the mailbox' ?>"><small>Leave blank to keep the saved password.</small></div>
   </div>
 
   <h2 style="margin-top:28px">AI (Groq)</h2>

@@ -94,13 +94,16 @@ The chat works without AI. With it, the chat also understands messy messages.
 
 **Test:** a green "Groq works" message appears.
 
-## 7. Email (5 min) 🟧 CPANEL
+## 7. Email (5 min) 🟧 CPANEL + 🟩 ADMIN
 
-1. cPanel → **Email Accounts** → **Create** → `info@motorpartsmarket.co.za`.
-2. 🟩 **Settings** → **Enquiries go to this email** → that address → **Save settings**.
-3. Click **Send test email**.
+1. 🟧 cPanel → **Email Accounts** → **Create** → `info@motorpartsmarket.co.za` → set a password → **Create**.
+2. 🟧 Next to the mailbox click **Connect Devices**. Note the **Outgoing Server** (usually `mail.motorpartsmarket.co.za`) and **SMTP Port** (465).
+3. 🟩 **Settings** → **Email**: **Mail server**, **Port**, **Mailbox** `info@motorpartsmarket.co.za`, **Mailbox password** → **Save settings**.
+4. Click **Send test email**.
 
-**Test:** the test email arrives (check spam). Every enquiry is also saved under **Enquiries**, even if email fails.
+**Test:** a green "Test email sent" message, and the email arrives (check spam). If it fails, the red message says why. Every enquiry is saved under **Enquiries** even when email fails.
+
+> This host switches off PHP's built-in mail, so the mailbox password is required.
 
 ## 8. Daily clean-up job (3 min) 🟧 CPANEL
 

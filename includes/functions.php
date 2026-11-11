@@ -91,9 +91,50 @@ function audit(string $action, string $detail = ''): void
     }
 }
 
-function sendMail(string $to, string $subject, string $body): bool
+/**
+ * Sends one plain-text email. SMTP comes from Admin → Settings → Email,
+ * falling back to secrets.php. Never throws: many hosts switch PHP's mail()
+ * off, so a failure comes back as a message instead of a 500 page.
+ *
+ * @return string '' when sent, otherwise the reason it failed
+ */
+function sendMail(string $to, string $subject, string $body, ?string $replyTo = null): string
 {
-    $from = SMTP_USER ?: CONTACT_EMAIL;
-    $headers = "From: " . APP_NAME . " <{$from}>\r\nReply-To: {$from}\r\nContent-Type: text/plain; charset=UTF-8";
-    return @mail($to, $subject, $body, $headers);
+    require_once __DIR__ . '/lib/PHPMailer/Exception.php';
+    require_once __DIR__ . '/lib/PHPMailer/PHPMailer.php';
+    require_once __DIR__ . '/lib/PHPMailer/SMTP.php';
+
+    $host = get_setting('smtp_host', SMTP_HOST);
+    $port = (int) get_setting('smtp_port', (string) SMTP_PORT) ?: 465;
+    $user = get_setting('smtp_user', SMTP_USER);
+    $pass = get_setting('smtp_pass', SMTP_PASS);
+
+    try {
+        $mail = new PHPMailer\PHPMailer\PHPMailer(true);
+        $mail->CharSet = 'UTF-8';
+        if ($host !== '' && $user !== '' && $pass !== '') {
+            $mail->isSMTP();
+            $mail->Host = $host;
+            $mail->Port = $port;
+            $mail->SMTPAuth = true;
+            $mail->Username = $user;
+            $mail->Password = $pass;
+            $mail->SMTPSecure = $port === 465 ? PHPMailer\PHPMailer\PHPMailer::ENCRYPTION_SMTPS : PHPMailer\PHPMailer\PHPMailer::ENCRYPTION_STARTTLS;
+            $mail->Timeout = 20;
+        } elseif (function_exists('mail')) {
+            $mail->isMail();
+        } else {
+            return 'This server does not allow PHP mail(). Fill in the mailbox details under Admin → Settings → Email.';
+        }
+        $mail->setFrom($user !== '' ? $user : get_setting('contact_email', CONTACT_EMAIL), APP_NAME);
+        $mail->addAddress($to);
+        if ($replyTo) $mail->addReplyTo($replyTo);
+        $mail->Subject = $subject;
+        $mail->Body = $body;
+        $mail->send();
+        return '';
+    } catch (Throwable $e) {
+        error_log('MotorPartsMarket mail to ' . $to . ' failed: ' . $e->getMessage());
+        return $e->getMessage();
+    }
 }
